@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, MenuItem, Button, Box, Typography } from '@mui/material';
-import { LocalizationProvider, MobileTimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, DatePicker, MobileTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const locations = ['Location 1', 'Location 2', 'Location 3', 'Location 4', 'Location 5'];
@@ -11,6 +11,7 @@ const CarpoolForm = ({ onConfirm }) => {
   const [peopleCount, setPeopleCount] = useState('');
   const [startTime, setStartTime] = useState(null);
   const [reachTime, setReachTime] = useState(null);
+  const [tripDate, setTripDate] = useState(null);
 
   const handleFromChange = (event) => {
     setFrom(event.target.value);
@@ -18,7 +19,13 @@ const CarpoolForm = ({ onConfirm }) => {
   };
 
   const handleSubmit = () => {
-    onConfirm(); // Call the confirmation function to show the next screen
+    if (!tripDate) {
+      alert("Please select a trip date.");
+      return;
+    }
+
+    // Pass selected date to parent for calendar update
+    onConfirm(tripDate.toISOString().split('T')[0]);
   };
 
   return (
@@ -85,21 +92,54 @@ const CarpoolForm = ({ onConfirm }) => {
           ))}
         </TextField>
 
+        <DatePicker
+          label="Trip Date"
+          value={tripDate}
+          onChange={(newValue) => setTripDate(newValue)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              fullWidth
+              margin="normal"
+              sx={{ maxWidth: '350px' }}
+            />
+          )}
+        />
+
         <MobileTimePicker
           label="Start Time"
           value={startTime}
           onChange={(newValue) => setStartTime(newValue)}
-          renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              fullWidth
+              margin="normal"
+              sx={{ maxWidth: '350px' }}
+            />
+          )}
         />
 
         <MobileTimePicker
           label="Reach Time"
           value={reachTime}
           onChange={(newValue) => setReachTime(newValue)}
-          renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              fullWidth
+              margin="normal"
+              sx={{ maxWidth: '350px' }}
+            />
+          )}
         />
 
-        <Button variant="contained" color="secondary" onClick={handleSubmit} sx={{ marginTop: '20px' }}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleSubmit}
+          sx={{ marginTop: '20px', maxWidth: '350px' }}
+        >
           Submit
         </Button>
       </Box>
